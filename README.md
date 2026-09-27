@@ -2,7 +2,7 @@
 # Assignment 2 — Algorithmic Analysis, Correctness and Performance Trade-offs
 
 ## 1. Overview
-In this project, three fundamental data structures were implemented from scratch: **Dynamic Array**, **Linked List** (singly linked with a tail pointer), and **Min-Heap**. The main goal of this assignment is to mathematically prove the algorithmic correctness and to practically compare the empirical performance of these structures with their theoretical asymptotic complexity (Big-O), evaluating the impact of memory architecture (cache locality) on execution time.
+This project included the design and implementation of three basic data structures: **Dynamic Array**, **Linked List** (single linked list with a tail pointer) and **Min-Heap**. In this assignment, the first major objective is the proof of the algorithmic correctness using mathematical proofs and comparison of the performance of these structures with their Big-O asymptotic complexity in theory considering cache memory locality.
 
 ## 2. Complexity Analysis
 Theoretical complexity of the implemented operations and auxiliary space requirements:
@@ -100,19 +100,21 @@ The Dynamic Array provides $O(1)$ access due to a contiguous memory block but re
 
 ## 6. Discussion (Theoretical vs. Empirical)
 **Agreement with Theory:** The experiments fully confirmed the theoretical predictions.
-1. In Workload 1, the `get(i)` time for the array remained constant $O(1)$ regardless of $n$, while for the `LinkedList`, the number of accesses grew linearly $O(N)$, reaching 500 million for $n=100,000$.
-2. In Workload 3, insertion at the head of the `LinkedList` took $O(1)$ (0 movements, ~16 µs), whereas the array required $O(N)$ (100 million shifts, ~10 ms).
-3. In Workload 4, the number of comparisons for $n$ extractions was ~2.8 million, which perfectly aligns with the $O(N \log N)$ function.
+1. For the array in Workload 1, `get(i)` operation was done in constant time $O(1)$ regardless of $n$, while in the case of `LinkedList`, the accesses increased in a linear way $O(N)$ and achieved 500 million for $n=100,000$.
+2. In Workload 3, the `headInsertion()` for `LinkedList` worked in $O(1)$ (zero movements, ~16 µs), while the array worked in $O(N)$ (100 million shifts, ~10 ms).
+3. In Workload 4, the comparisons were made for $n$ extraction operations in the amount of ~2.8 million, which matches the $O(N \log N)$ function exactly.
+
 
 **Discrepancies and the Impact of Constant Factors:** The most interesting behavior is observed in Workload 2 (Search) and Workload 3 (operations in the middle). 
-Theoretically, the `contains(x)` search takes $O(N)$ for both the array and the list. The benchmark showed that **the number of comparisons is absolutely identical** (100,000,000 each). However, the array completed the search in 29 milliseconds, while the list took 253 milliseconds (almost 9 times slower). 
-This is explained by **Cache Locality**. Elements of the `DynamicArray` are allocated contiguously in memory and are loaded into the ultra-fast L1/L2 CPU cache in blocks. The nodes of the `LinkedList` are scattered throughout the memory, causing continuous cache misses and forcing the CPU to sit idle waiting for data from the slow RAM.
+From the theoretical standpoint, the `contains(x)` function executes at an order of $O(N)$ for both the array and the list. According to the results, **the number of comparisons is absolutely the same** (100,000,000 times each). Yet, the array finished its work in 29 milliseconds, whereas the list worked for 253 milliseconds (about 9 times slower).
+The explanation is the **Cache Locality**: elements of the `DynamicArray` are stored sequentially in memory and loaded to the fast CPU cache L1/L2 as chunks. On the other hand, the nodes of the `LinkedList` are dispersed in memory resulting in the frequent cache misses and CPU idleness when the CPU waits for data from RAM.
+
 
 ## 7. Design Recommendations
-The choice of data structure should be dictated by the expected workload profile:
-1. **Dynamic Array:** Ideal for most standard tasks. Suited for scenarios with frequent index-based reads (`get`) and appending elements strictly to the end. It is the best choice when the overall speed of traversal (search) algorithms is important due to its CPU cache friendliness.
-2. **Linked List:** A highly specific structure. It should be used **only** in systems with intensive insertions or removals strictly at the head of the list (or at the tail if a pointer is present), where an array would degrade to $O(N)$. It is entirely unsuitable for systems with frequent random index access.
-3. **Min-Heap:** The definitive choice for task scheduling systems, timers, and priority queues. It allows for extracting the minimum element in $O(\log N)$ and never requires $O(N)$ element shifts, unlike sorted arrays.
+Selection of the data structure must depend on the expected workload profile:
+1. **Dynamic Array:** Best for most general workloads. Suitable for applications with heavy index accesses (`get`) and additions always at the end of the array. It should be used where the total efficiency of traversal (search) algorithms matters, since dynamic array is very friendly to CPU cache.
+2. **Linked List:** A very specialized structure. Should be used **only** in systems with lots of insertions/deletions always at the beginning of the list (at the end if there is a pointer to it), in which case an array would have $O(N)$ operations. It is completely wrong to use it in systems with frequent accesses by random indexes.
+3. **Min-Heap:** The right data structure for task scheduling systems, timers, and priority queues. In Min-Heap one can extract minimal element in $O(\log N)$ time and never shift any elements in $O(N)$ like in sorted array.
 
 ## 8. Conclusion
-During this experiment, a Dynamic Array, a Linked List, and a Min-Heap were implemented and tested. The mathematical analysis of asymptotic complexity was successfully validated by empirical counter data (comparisons, accesses, movements). The main conclusion of the study is that when designing high-load systems, one cannot rely solely on Big-O notation. The memory architecture of modern processors (Cache Locality) makes data structures based on contiguous memory blocks (arrays, array-based heaps) orders of magnitude faster than node-based structures at an equivalent algorithmic complexity.
+As part of this lab, Dynamic Array, Linked List and Min-Heap were implemented and analyzed. Asymptotic complexity calculations were empirically confirmed with counter values (comparisons, accesses, movements). The key result from this lab is that while designing high-load systems, one can not solely rely on Big-O notation. Due to memory structure used by modern processors (Cache Locality), contiguous data structures (arrays, heap arrays) are many orders faster than node-based ones given the same algorithmic complexity.
